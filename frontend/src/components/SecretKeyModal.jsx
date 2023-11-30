@@ -5,7 +5,6 @@ const SecretKeyModal = ({ isOpen, onClose, onConfirm }) => {
 
   const handleSubmit = () => {
     onConfirm(key);
-    // onClose();
   };
 
   if (!isOpen) return null;
