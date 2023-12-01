@@ -11,7 +11,7 @@ import { useHover } from './utils/hoverUtil';
 const startDate = new Date(process.env.REACT_APP_START_DATE);
 const today = format(new Date(), 'yyyy-MM-dd');
 const api = process.env.REACT_APP_API_URL;
-
+console.log("🚀 ~ file: App.js:14 ~ api:", api)
 
 function App() {
   const [schedule, setSchedule] = useState([]);
