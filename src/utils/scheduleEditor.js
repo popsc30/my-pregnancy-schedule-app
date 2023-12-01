@@ -38,12 +38,7 @@ export function useScheduleEditor(schedule, setSchedule) {
         const updatedSchedule = [...schedule];
         updatedSchedule[editingWeekIndex].notes.mark = editContent;
         setSchedule(updatedSchedule);
-        const updated = updatedSchedule.map((item, index) => {
-            return {
-                index: index,
-                mark: item.mark
-            };
-        });
+        const updated = { index: editingWeekIndex, mark: editContent };
         console.log(updated);
         try {
             const response = await fetch(api + '/update-note', {
