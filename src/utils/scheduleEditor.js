@@ -38,16 +38,21 @@ export function useScheduleEditor(schedule, setSchedule) {
         const updatedSchedule = [...schedule];
         updatedSchedule[editingWeekIndex].notes.mark = editContent;
         setSchedule(updatedSchedule);
-        console.log(updatedSchedule.map((item) => item.notes));
+        const updated = updatedSchedule.map((item, index) => {
+            return {
+                index: index,
+                mark: item.mark
+            };
+        });
+        console.log(updated);
         try {
             const response = await fetch(api + '/update-note', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updatedSchedule.map((item) => item.notes)),
+                body: JSON.stringify(updated),
             });
-
             if (response.ok) {
                 console.log('Schedule updated successfully');
             } else {
