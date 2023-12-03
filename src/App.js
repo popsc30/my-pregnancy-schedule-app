@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { format,isWithinInterval } from 'date-fns';
 import SecretKeyModal from './components/SecretKeyModal';
 import { WeekCard } from './components/WeekCard';
 import { calculateSchedule } from './utils/scheduleUtils';
