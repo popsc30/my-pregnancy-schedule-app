@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import { format, differenceInCalendarWeeks } from 'date-fns';
+import { format } from 'date-fns';
 import SecretKeyModal from './components/SecretKeyModal';
 import { WeekCard } from './components/WeekCard';
 import { calculateSchedule } from './utils/scheduleUtils';
@@ -9,13 +9,11 @@ import { useScheduleEditor } from './utils/scheduleEditor';
 import { useHover } from './utils/hoverUtil';
 
 const startDate = new Date(process.env.REACT_APP_START_DATE);
-const today = format(new Date(), 'yyyy-MM-dd');
+const today = new Date();
 const api = process.env.REACT_APP_API_URL;
-console.log("🚀 ~ file: App.js:14 ~ api:", api)
 
 function App() {
   const [schedule, setSchedule] = useState([]);
-  const [currentWeek, setCurrentWeek] = useState(null);
   const { hoveredWeek, handleMouseEnter, handleMouseLeave } = useHover();
 
   const {
@@ -30,17 +28,9 @@ function App() {
   } = useScheduleEditor(schedule, setSchedule);
 
   useEffect(() => {
-    const today = new Date();
-    const weeksDifference = differenceInCalendarWeeks(today, startDate);
-    if (weeksDifference >= 0 && weeksDifference < 40) {
-      setCurrentWeek(weeksDifference);
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch(api+'/get-note');
+        const response = await fetch(api + '/get-note');
         if (response.ok) {
           const jsonData = await response.json();
           const newSchedule = calculateSchedule(jsonData, startDate);
@@ -49,8 +39,7 @@ function App() {
           console.error('Failed to fetch schedule');
         }
       } catch (error) {
-        console.log(api + '/get-note');
-        console.error('Error:',error);
+        console.error('Error:', error);
       }
     };
 
@@ -68,12 +57,13 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {trimester.map((weekInfo, index) => {
             const globalIndex = index + offset;
+            const isCurrentWeek = isWithinInterval(today, { start: new Date(weekInfo.startDate), end: new Date(weekInfo.endDate) });
             return (
               <WeekCard
-                key={globalIndex}  
+                key={globalIndex}
                 weekInfo={weekInfo}
                 globalIndex={globalIndex}
-                currentWeek={currentWeek}
+                isCurrentWeek={isCurrentWeek}
                 handleMouseEnter={handleMouseEnter}
                 handleMouseLeave={handleMouseLeave}
                 handleEditClick={handleEditClick}
@@ -94,7 +84,7 @@ function App() {
     <div className="App p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Pregnancy Schedule</h2>
-        <span className="text-lg text-gray-600">{today}</span>
+        <span className="text-lg text-gray-600">{format(today, 'yyyy-MM-dd')}</span>
       </div>
       <div className="p-4 bg-gray-100">
         <p className="text-lg text-gray-700">

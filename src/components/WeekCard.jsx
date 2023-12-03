@@ -1,7 +1,7 @@
 export const WeekCard = ({
   weekInfo,
   globalIndex,
-  currentWeek,
+  isCurrentWeek,
   handleMouseEnter,
   handleMouseLeave,
   handleEditClick,
@@ -14,7 +14,7 @@ export const WeekCard = ({
   <div
     key={globalIndex}
     className={`border rounded p-4 hover:bg-gray-100 ${
-      globalIndex === currentWeek ? "bg-green-100" : ""
+      isCurrentWeek ? "bg-green-100" : ""
     }`}
     onMouseEnter={() => handleMouseEnter(globalIndex)}
     onMouseLeave={handleMouseLeave}
@@ -32,10 +32,10 @@ export const WeekCard = ({
     <p>
       {weekInfo.startDate} - {weekInfo.endDate}
     </p>
-    {(hoveredWeek === globalIndex || globalIndex === currentWeek) && (
+    {(hoveredWeek === globalIndex || isCurrentWeek) && (
       <div
         className={`mt-2 p-2 rounded ${
-          globalIndex === currentWeek ? "bg-yellow-100" : "bg-blue-100"
+          isCurrentWeek ? "bg-yellow-100" : "bg-blue-100"
         }`}
       >
         <p className="mt-2 text-sm text-blue-600">{weekInfo.notes.checkups}</p>

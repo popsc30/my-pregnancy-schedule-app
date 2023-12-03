@@ -1,4 +1,4 @@
-import { addWeeks, format } from 'date-fns';
+import { addWeeks, format, subDays } from 'date-fns';
 
 
 export const calculateSchedule = (jsonData, startDate) => {
@@ -7,7 +7,7 @@ export const calculateSchedule = (jsonData, startDate) => {
 
     for (let week = 1; week <= 40; week++) {
         const weekStart = addWeeks(start, week - 1);
-        const weekEnd = addWeeks(start, week);
+        const weekEnd = subDays(addWeeks(start, week), 1);
 
         const weekData = jsonData[week - 1];
         const notes = {
