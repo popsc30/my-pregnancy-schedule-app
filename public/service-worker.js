@@ -1,17 +1,29 @@
 const CACHE_NAME = 'my-site-cache-v1';
 
 self.addEventListener('install', event => {
+    const staticAssets = [
+        '/',
+        '/index.html',
+        '/manifest.json',
+        '/favicon.ico',
+        '/logo192.png',
+        '/logo512.png',
+        // 其他关键静态资源
+    ];
+
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                return fetch('index.html')
-                    .then(response => response.text())
-                    .then(body => {
-                        const urlsToCache = parseUrlsFromBody(body);
-                        urlsToCache.push('index.html'); // 确保index.html也被缓存
-                        console.log("🚀 ~ file: service-worker.js:12 ~ urlsToCache:", urlsToCache)
-                        return cache.addAll(urlsToCache);
-                    });
+                return cache.addAll(staticAssets).then(() => {
+                    return fetch('index.html')
+                        .then(response => response.text())
+                        .then(body => {
+                            const urlsToCache = parseUrlsFromBody(body);
+                            // 确保这些URL不重复
+                            const uniqueUrlsToCache = [...new Set(urlsToCache)];
+                            return cache.addAll(uniqueUrlsToCache);
+                        });
+                });
             })
     );
 });
