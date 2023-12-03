@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { addWeeks, format, differenceInCalendarWeeks } from 'date-fns';
+import { addWeeks, format, subDays, isWithinInterval } from 'date-fns';
 import jsonData from './data/note.json';
 
 const calculateSchedule = (startDate) => {
@@ -11,7 +11,7 @@ const calculateSchedule = (startDate) => {
 
   for (let week = 1; week <= 40; week++) {
     const weekStart = addWeeks(start, week - 1);
-    const weekEnd = addWeeks(start, week);
+    const weekEnd = subDays(addWeeks(start, week),1);
 
     // 获取对应周的产检信息和注意事项
     const weekData = jsonData[week - 1];
@@ -33,12 +33,10 @@ const calculateSchedule = (startDate) => {
 };
 
 function App() {
-  // const [startDate, setStartDate] = useState('');
   const fixedStartDate = new Date('2023-10-17');
   const [schedule, setSchedule] = useState([]);
   const [hoveredWeek, setHoveredWeek] = useState(null);
-  const [currentWeek, setCurrentWeek] = useState(null);
-
+  const today = new Date();
 
   const handleMouseEnter = (weekNumber) => {
     setHoveredWeek(weekNumber);
@@ -51,13 +49,6 @@ function App() {
   useEffect(() => {
     const newSchedule = calculateSchedule(fixedStartDate);
     setSchedule(newSchedule);
-
-    // Calculate the current week
-    const today = new Date();
-    const weeksDifference = differenceInCalendarWeeks(today, fixedStartDate);
-    if (weeksDifference >= 0 && weeksDifference < 40) {
-      setCurrentWeek(weeksDifference);
-    }
   }, []);
 
   // 将日程划分为三个孕期
@@ -73,17 +64,18 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {trimester.map((weekInfo, index) => {
           const globalIndex = index + offset; // 全局索引
+          const isCurrentWeek = isWithinInterval(today, { start: new Date(weekInfo.startDate), end: new Date(weekInfo.endDate) });
           return (
             <div
               key={globalIndex}
-              className={`border rounded p-4 hover:bg-gray-100 ${globalIndex === currentWeek ? 'bg-green-100' : ''}`}
+              className={`border rounded p-4 hover:bg-gray-100 ${isCurrentWeek ? 'bg-green-100' : ''}`}
               onMouseEnter={() => handleMouseEnter(globalIndex)}
               onMouseLeave={handleMouseLeave}
             >
               <h4 className="font-semibold">{weekInfo.week}</h4>
               <p>{weekInfo.startDate} - {weekInfo.endDate}</p>
-              {(hoveredWeek === globalIndex || globalIndex === currentWeek) && (
-                <div className={`mt-2 p-2 rounded ${globalIndex === currentWeek ? 'bg-yellow-100' : 'bg-blue-100'}`}>
+              {(hoveredWeek === globalIndex || isCurrentWeek) && (
+                <div className={`mt-2 p-2 rounded ${isCurrentWeek ? 'bg-yellow-100' : 'bg-blue-100'}`}>
                   {weekInfo.mark && (
                     <p className="mt-2 text-sm italic">{weekInfo.notes.mark}</p>
                   )}
@@ -98,7 +90,6 @@ function App() {
       </div>
     </>
   );
-
 
   return (
     <div className="App p-4">
