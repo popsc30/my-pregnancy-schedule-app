@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { addWeeks, format, subDays, isWithinInterval } from 'date-fns';
+import { addWeeks, format, subDays, isWithinInterval,startOfDay, endOfDay } from 'date-fns';
 import jsonData from './data/note.json';
+import { tr } from 'date-fns/locale';
 
 const calculateSchedule = (startDate) => {
   const schedule = [];
@@ -64,7 +65,8 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {trimester.map((weekInfo, index) => {
           const globalIndex = index + offset; // 全局索引
-          const isCurrentWeek = isWithinInterval(today, { start: new Date(weekInfo.startDate), end: new Date(weekInfo.endDate) });
+          const isCurrentWeek = today >= startOfDay(new Date(weekInfo.startDate)) && today <= endOfDay(new Date(weekInfo.endDate));
+         
           return (
             <div
               key={globalIndex}

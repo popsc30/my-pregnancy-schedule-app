@@ -44,7 +44,6 @@ self.addEventListener('fetch', event => {
                 }
 
                 return fetch(event.request).then(response => {
-                    console.log("🚀 ~ file: service-worker.js:35 ~ returnfetch ~ response:", response.url,'#####',response.type)
                     // ...检查响应有效性等
                     if (!response || response.status !== 200 || response.type !== 'basic') {
                         return response;
