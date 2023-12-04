@@ -57,7 +57,7 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {trimester.map((weekInfo, index) => {
             const globalIndex = index + offset;
-            const isCurrentWeek = isWithinInterval(today, { start: new Date(weekInfo.startDate), end: new Date(weekInfo.endDate) });
+            const isCurrentWeek = today >= startOfDay(new Date(weekInfo.startDate)) && today <= endOfDay(new Date(weekInfo.endDate));
             return (
               <WeekCard
                 key={globalIndex}
